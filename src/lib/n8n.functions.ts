@@ -22,6 +22,7 @@ export const enviarFormulario = createServerFn({ method: "POST" })
     z.object({
       url: urlSchema,
       campos: z.record(z.string()),
+      campoFicheiros: z.string().min(1).max(100).default("field-0"),
       ficheiros: z.array(z.object({ nome: z.string(), tipo: z.string(), base64: z.string() })).max(5),
     }).parse(d),
   )
@@ -30,7 +31,7 @@ export const enviarFormulario = createServerFn({ method: "POST" })
     for (const [k, v] of Object.entries(data.campos)) fd.append(k, v);
     for (const f of data.ficheiros) {
       const bytes = Uint8Array.from(atob(f.base64), (c) => c.charCodeAt(0));
-      fd.append("documentos", new Blob([bytes], { type: f.tipo }), f.nome);
+      fd.append(data.campoFicheiros, new Blob([bytes], { type: f.tipo }), f.nome);
     }
     try {
       const res = await fetch(data.url, { method: "POST", body: fd });
@@ -38,7 +39,14 @@ export const enviarFormulario = createServerFn({ method: "POST" })
       if (!res.ok) return { ok: false as const, erro: `n8n respondeu ${res.status}: ${text.slice(0, 300)}` };
       let json: unknown = text;
       try { json = JSON.parse(text); } catch {}
-      return { ok: true as const, resultado: normalizar(json) };
+      const resultado = normalizar(json);
+      if (!resultado.resumo && resultado.itens.length === 0 && resultado.fontes.length === 0)
+        return {
+          ok: false as const,
+          erro:
+            "O n8n recebeu o pedido mas não devolveu a análise. No Form Trigger, defina a resposta para quando o workflow terminar (nó \"Respond to Webhook\") e devolva {resumo, itens, fontes}.",
+        };
+      return { ok: true as const, resultado };
     } catch (e) {
       return { ok: false as const, erro: `Não foi possível contactar o n8n: ${(e as Error).message}` };
     }

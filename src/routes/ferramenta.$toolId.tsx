@@ -79,7 +79,7 @@ function ToolForm({ toolId }: { toolId: string }) {
     let demo = true;
     if (settings.formUrl) {
       const ficheiros = await Promise.all(files.slice(0, 5).map(async (f) => ({ nome: f.name, tipo: f.type || "application/octet-stream", base64: await toB64(f) })));
-      const res = await send({ data: { url: settings.formUrl, campos: { ferramenta: tool.id, cliente_id: cid, ...dados }, ficheiros } });
+      const res = await send({ data: { url: settings.formUrl, campoFicheiros: settings.campoFicheiros || "field-0", campos: { ferramenta: tool.id, cliente_id: cid, ...dados }, ficheiros } });
       if (!res.ok) {
         setBusy(false);
         toast.error(res.erro);

@@ -17,7 +17,7 @@ export type Analise = {
   validada: boolean;
   sessionId: string;
 };
-export type Settings = { formUrl: string; chatUrl: string; rates: Rates };
+export type Settings = { formUrl: string; chatUrl: string; campoFicheiros: string; rates: Rates };
 type State = { clientes: Cliente[]; analises: Analise[]; settings: Settings };
 
 const KEY = "contab-rag-v1";
@@ -31,7 +31,7 @@ const OLD_TEST_FORM_URL =
 const initial: State = {
   clientes: [{ id: "c1", nome: "Exemplo, Lda.", nif: "509999999" }],
   analises: [],
-  settings: { formUrl: DEFAULT_FORM_URL, chatUrl: "", rates: DEFAULT_RATES },
+  settings: { formUrl: DEFAULT_FORM_URL, chatUrl: "", campoFicheiros: "field-0", rates: DEFAULT_RATES },
 };
 
 let state: State = initial;

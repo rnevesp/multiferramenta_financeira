@@ -28,6 +28,7 @@ function Definicoes() {
       }}>
         <div><Label>URL do formulário n8n</Label><Input value={f.formUrl} onChange={(e) => setF({ ...f, formUrl: e.target.value })} placeholder="https://…/form/…" /></div>
         <div><Label>URL do chat n8n</Label><Input value={f.chatUrl} onChange={(e) => setF({ ...f, chatUrl: e.target.value })} placeholder="https://…/webhook/…/chat" /></div>
+        <div><Label>Nome do campo de ficheiros no formulário n8n</Label><Input value={f.campoFicheiros} onChange={(e) => setF({ ...f, campoFicheiros: e.target.value })} placeholder="field-0" /></div>
         <div className="grid grid-cols-3 gap-3">
           <div><Label>IRC geral (%)</Label><Input type="number" value={f.rates.ircGeral} onChange={(e) => setF({ ...f, rates: { ...f.rates, ircGeral: Number(e.target.value) } })} /></div>
           <div><Label>IRC PME (%)</Label><Input type="number" value={f.rates.ircPme} onChange={(e) => setF({ ...f, rates: { ...f.rates, ircPme: Number(e.target.value) } })} /></div>
