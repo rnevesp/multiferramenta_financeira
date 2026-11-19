@@ -21,10 +21,14 @@ export type Settings = { formUrl: string; chatUrl: string; rates: Rates };
 type State = { clientes: Cliente[]; analises: Analise[]; settings: Settings };
 
 const KEY = "contab-rag-v1";
+
+/** Default n8n form trigger URL (can be changed in Definições). */
+export const DEFAULT_FORM_URL =
+  "https://n8n.srv1203601.hstgr.cloud/form-test/97b0c0c6-26fd-443d-895c-c1faae460a01";
 const initial: State = {
   clientes: [{ id: "c1", nome: "Exemplo, Lda.", nif: "509999999" }],
   analises: [],
-  settings: { formUrl: "", chatUrl: "", rates: DEFAULT_RATES },
+  settings: { formUrl: DEFAULT_FORM_URL, chatUrl: "", rates: DEFAULT_RATES },
 };
 
 let state: State = initial;
@@ -36,7 +40,13 @@ function load() {
   loaded = true;
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) state = { ...initial, ...JSON.parse(raw) };
+    if (raw) {
+      const saved = JSON.parse(raw) as Partial<State>;
+      const settings = { ...initial.settings, ...saved.settings };
+      // Browsers that saved settings before a default existed keep an empty URL; use the default.
+      if (!settings.formUrl) settings.formUrl = DEFAULT_FORM_URL;
+      state = { ...initial, ...saved, settings };
+    }
   } catch {}
 }
 
